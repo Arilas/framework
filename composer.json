@@ -24,6 +24,7 @@
     "autoload": {
         "psr-4": {
             "Bluz\\": "src/",
+            "BluzTest\\": "tests/module/",
             "Bluz\\Tests\\": "tests/src"
         },
         "files": [
