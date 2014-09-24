@@ -2,6 +2,19 @@ Bluz, a lightweight PHP Framework
 =================================
 Easy to setup, easy to use.
 
+## Status
+
+This version of Bluz not compatible with old code base. In mind of Author, this is Bluz 2.0 or something like that.
+
+The main changes(many of this don't implemented yet):
+
+1. Added ServiceManager that must replace all Singletons (cause Singleton is anti-pattern, and Singleton are not flexible).
+2. Added ModuleManager that must be used for loading your code base and other third-party components.
+3. New Application class (one for all application, init must be in Modules)
+4. ...
+
+This list may be extended
+
 ## Achievements
 
 [![Build Status](https://secure.travis-ci.org/bluzphp/framework.png?branch=master)](https://travis-ci.org/bluzphp/framework)
