@@ -197,6 +197,13 @@ class ServiceManager implements ServiceManagerInterface
         return $service;
     }
 
+    public function setService($name, $service)
+    {
+        $this->instances[$name] = $service;
+
+        return $this;
+    }
+
     /**
      * Method used for checks if some Service exists in ServiceManager by name or alias
      * @param string $name

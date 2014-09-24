@@ -10,6 +10,7 @@ namespace Bluz\ModuleManager;
 
 use Bluz\ModuleManager\Exception\ModuleNotFoundException;
 use Bluz\ModuleManager\Exception\ModuleNotRegisteredException;
+use Bluz\ServiceManager\ServiceManager;
 
 /**
  * Class ModuleManager - manager and loader of all Application Modules
@@ -26,20 +27,21 @@ class ModuleManager
     /** @var array  */
     protected $config = [];
 
+    /** @var ServiceManager */
+    protected $serviceManager;
+
     /** @var bool  */
     protected $loaded = false;
 
     /**
      * Initialise ModuleManager by Array of active Modules and base config
-     * @param array $modules  an array of Modules that we need to load
-     * @param array $config   an array of Config, that used for merging config to
+     * @param array $modules an array of Modules that we need to load
+     * @param ServiceManager $serviceManager
      */
-    public function __construct(array $modules, array $config = [])
+    public function __construct(array $modules, ServiceManager $serviceManager)
     {
-        $this
-            ->setModules($modules)
-            ->setConfig($config)
-        ;
+        $this->setModules($modules);
+        $this->serviceManager = $serviceManager;
     }
 
     /**
@@ -70,18 +72,6 @@ class ModuleManager
     public function getConfig()
     {
         return $this->config;
-    }
-
-    /**
-     * Set config
-     * @param array $config
-     * @return $this
-     */
-    public function setConfig($config)
-    {
-        $this->config = $config;
-
-        return $this;
     }
 
     /**
@@ -118,7 +108,9 @@ class ModuleManager
         if (class_exists($className)) {
             $instance = new $className();
             if (method_exists($instance, 'getConfig')) {
-                $this->config = array_replace_recursive($this->config, $instance->getConfig());
+                $this->addConfig(
+                    $instance->getConfig()
+                );
             }
 
             $this->loadedModules[$module] = $instance;
@@ -129,6 +121,22 @@ class ModuleManager
                 'Module ' . $module . ' not found'
             );
         }
+    }
+
+    /**
+     * Set config
+     * @param array $config
+     * @return $this
+     */
+    public function addConfig($config)
+    {
+        $this->config = array_replace_recursive($this->config, $config);
+        $this->serviceManager->setService('Config', $this->config);
+        if (isset($config['service_manager'])) {
+            $this->serviceManager->getServiceManagerConfig()->setServiceManagerConfig($config['service_manager']);
+        }
+
+        return $this;
     }
 
     /**
